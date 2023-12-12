@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://dpq0g6jrlkuea"]
+
+[ext_resource type="Script" path="res://scene/0/game.gd" id="1_ic1eh"]
+[ext_resource type="PackedScene" uid="uid://c8p8p11wpyu27" path="res://scene/0/sketch.tscn" id="2_wumqn"]
+
+[node name="Game" type="Node"]
+script = ExtResource("1_ic1eh")
+
+[node name="FPS" type="Label" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Sketch" parent="." instance=ExtResource("2_wumqn")]

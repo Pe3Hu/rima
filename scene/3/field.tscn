@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://c1pbhbeg80qw6"]
+
+[ext_resource type="Script" path="res://scene/3/field.gd" id="1_trvem"]
+[ext_resource type="PackedScene" uid="uid://ctj6bxllg2yd5" path="res://scene/3/marker.tscn" id="2_i1d58"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7paps"]
+
+[node name="Field" type="MarginContainer"]
+custom_minimum_size = Vector2(5, 5)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_trvem")
+
+[node name="BG" type="Panel" parent="."]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7paps")
+
+[node name="Marker" parent="." instance=ExtResource("2_i1d58")]
+layout_mode = 2
