@@ -13,6 +13,4 @@ func set_attributes(input_: Dictionary) -> void:
 	grid = input_.grid
 	
 	custom_minimum_size = Global.vec.size.field
-	var style = StyleBoxFlat.new()
-	bg.set("theme_override_styles/panel", style)
-
+	marker.set_field(self)

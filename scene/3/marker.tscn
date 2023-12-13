@@ -29,10 +29,26 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_7paps")
 
 [node name="Role" parent="." instance=ExtResource("2_6al2d")]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
 
 [node name="Index" parent="." instance=ExtResource("2_6al2d")]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
+
+[node name="HP" parent="." instance=ExtResource("2_6al2d")]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="ATK" parent="." instance=ExtResource("2_6al2d")]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+
+[node name="CD" parent="." instance=ExtResource("2_6al2d")]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0

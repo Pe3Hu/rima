@@ -4,21 +4,25 @@ extends MarginContainer
 @onready var bg = $BG
 @onready var role = $Role
 @onready var index = $Index
+@onready var hp = $HP
+@onready var atk = $ATK
+@onready var cd = $CD
 
 var proprietor = null
 var field = null
 
 
-func set_attributes(input_: Dictionary) -> void:
-	proprietor = input_.proprietor
-	field = input_.field
+func set_field(field_: MarginContainer) -> void:
+	field = field_
+	var style = StyleBoxFlat.new()
+	field.bg.set("theme_override_styles/panel", style)
 
 
 func set_proprietor(proprietor_: MarginContainer) -> void:
 	proprietor = proprietor_
 	
 	if field != null:
-		var style = field.get("theme_override_styles/panel")
+		var style = field.bg.get("theme_override_styles/panel")
 		style.bg_color = Global.color.role[proprietor.role]
 	
 	update_icons()
@@ -35,8 +39,16 @@ func update_icons() -> void:
 	input.subtype = proprietor.index
 	index.set_attributes(input)
 	index.custom_minimum_size = Vector2(Global.vec.size.sixteen)
-
-	role.set("theme_override_constants/margin_left", 4)
-	role.set("theme_override_constants/margin_top", 4)
-	custom_minimum_size = role.custom_minimum_size + index.custom_minimum_size * 0.75
+	
+	if proprietor.role == "attack":
+		for type in Global.arr.parameter:
+			input.subtype = proprietor[type].current
+			var icon = get(type)
+			icon.set_attributes(input)
+			icon.custom_minimum_size = Vector2(Global.vec.size.sixteen)
+			icon.visible = true
+	
+	#role.set("theme_override_constants/margin_left", 4)
+	#role.set("theme_override_constants/margin_top", 4)
+	custom_minimum_size = Vector2(Global.vec.size.field)
 

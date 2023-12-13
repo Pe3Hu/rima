@@ -24,6 +24,7 @@ func _ready() -> void:
 
 func init_arr() -> void:
 	arr.edge = [1, 2, 3, 4, 5, 6]
+	arr.parameter = ["hp", "atk", "cd"]
 
 
 func init_num() -> void:
@@ -121,7 +122,7 @@ func init_vec():
 	vec.size.bar = Vector2(120, 12)
 	
 	vec.size.field = Vector2(64, 64)
-	vec.size.role = Vector2(48, 48)
+	vec.size.role = Vector2(32, 32)
 	
 	init_window_size()
 
@@ -137,8 +138,8 @@ func init_color():
 	var h = 360.0
 	
 	color.role = {}
-	color.role.attacker = Color.from_hsv(0 / h, 0.9, 0.7)
-	color.role.deffender = Color.from_hsv(210 / h, 0.9, 0.7)
+	color.role.attack = Color.from_hsv(0 / h, 0.39, 0.7)
+	color.role.defense = Color.from_hsv(210 / h, 0.39, 0.7)
 
 
 func save(path_: String, data_: String):

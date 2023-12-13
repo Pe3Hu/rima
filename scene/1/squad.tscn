@@ -28,4 +28,5 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_7paps")
 
 [node name="Defenders" type="VBoxContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 0
 alignment = 1
