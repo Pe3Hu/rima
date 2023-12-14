@@ -12,18 +12,25 @@ var proprietor = null
 var field = null
 
 
+func _ready() -> void:
+	var style = StyleBoxFlat.new()
+	bg.set("theme_override_styles/panel", style)
+	custom_minimum_size = Vector2(Global.vec.size.field)
+
+
 func set_field(field_: MarginContainer) -> void:
 	field = field_
-	var style = StyleBoxFlat.new()
-	field.bg.set("theme_override_styles/panel", style)
 
 
 func set_proprietor(proprietor_: MarginContainer) -> void:
 	proprietor = proprietor_
 	
 	if field != null:
-		var style = field.bg.get("theme_override_styles/panel")
-		style.bg_color = Global.color.role[proprietor.role]
+		proprietor.field = field
+		
+		if proprietor.role == "defense":
+			var style = bg.get("theme_override_styles/panel")
+			style.bg_color = Global.color.defender[proprietor.status]
 	
 	update_icons()
 
@@ -47,8 +54,4 @@ func update_icons() -> void:
 			icon.set_attributes(input)
 			icon.custom_minimum_size = Vector2(Global.vec.size.sixteen)
 			icon.visible = true
-	
-	#role.set("theme_override_constants/margin_left", 4)
-	#role.set("theme_override_constants/margin_top", 4)
-	custom_minimum_size = Vector2(Global.vec.size.field)
 

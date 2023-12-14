@@ -9,10 +9,12 @@ var grids = {}
 
 func set_attributes(input_: Dictionary) -> void:
 	arena = input_.arena
+	arena.squad.battlefield = self
 	
 	init_fields()
 	unleash_defenders()
 	unleash_attackers()
+	arena.squad.reset()
 
 
 func init_fields() -> void:
@@ -30,19 +32,20 @@ func init_fields() -> void:
 			var input = {}
 			input.battlefield = self
 			input.grid = Vector2(_j, _i)
-		
-			var field = Global.scene.field.instantiate()
-			fields.add_child(field)
-			field.set_attributes(input)
-			grids.all.append(input.grid)
 			
 			if corners.has(_i) or corners.has(_j):
 				if corners.has(_i) and corners.has(_j):
-					grids.corner.append(input.grid)
+					input.type = "corner"
 				else:
-					grids.edge.append(input.grid)
+					input.type = "edge"
 			else:
-				grids.center.append(input.grid)
+				input.type = "center"
+			
+			var field = Global.scene.field.instantiate()
+			fields.add_child(field)
+			field.set_attributes(input)
+			grids[input.type].append(input.grid)
+			grids.all.append(input.grid)
 
 
 func unleash_defenders() -> void:
@@ -102,3 +105,24 @@ func get_grids_for_attackers() -> Array:
 		grids.free.erase(grid)
 	
 	return result
+
+
+func prepare_spell_coverage() -> void:
+	var spell = arena.squad.selected.spell
+	var defender = arena.squad.selected.defender
+	
+	if Global.dict.pattern.types[spell.letter.subtype].has(defender.field.type):
+		if spell.coverage.is_empty():
+			for icon in spell.directions.get_children():
+				for direction in Global.dict.directions[icon.subtype]:
+					var grid = defender.field.grid
+					
+					while boundary_check(grid):
+						if grid != defender.field.grid:
+							spell.coverage.append(grid)
+						
+						grid += direction
+
+
+func boundary_check(grid_: Vector2) -> bool:
+	return grid_.x >= 0 and grid_.y >= 0 and grid_.x < fields.columns and grid_.y < fields.columns

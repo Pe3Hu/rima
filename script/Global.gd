@@ -25,6 +25,7 @@ func _ready() -> void:
 func init_arr() -> void:
 	arr.edge = [1, 2, 3, 4, 5, 6]
 	arr.parameter = ["hp", "atk", "cd"]
+	arr.spell = ["letter", "damage", "cooldown"]
 
 
 func init_num() -> void:
@@ -35,6 +36,8 @@ func init_num() -> void:
 
 func init_dict() -> void:
 	init_neighbor()
+	init_pattern()
+	
 
 
 func init_neighbor() -> void:
@@ -83,21 +86,34 @@ func init_neighbor() -> void:
 	]
 
 
-func init_emptyjson() -> void:
-	dict.emptyjson = {}
-	dict.emptyjson.title = {}
+func init_pattern() -> void:
+	dict.directions = {}
+	dict.directions["d"] = [Vector2(1, 0), Vector2(-1, 0)]
+	dict.directions["q"] = [Vector2(1, 1), Vector2(-1, -1)]
+	dict.directions["b"] = [Vector2(0, 1), Vector2(0, -1)]
+	dict.directions["p"] = [Vector2(-1, 1), Vector2(1, -1)]
 	
-	var path = "res://asset/json/.json"
+	dict.pattern = {}
+	dict.pattern.index = {}
+	dict.pattern.types = {}
+	dict.pattern.mirrors = [0, 1, 2, 3, 4, 5, 9]
+	
+	var path = "res://asset/json/rima_pattern.json"
 	var array = load_data(path)
 	
-	for emptyjson in array:
+	for pattern in array:
 		var data = {}
 		
-		for key in emptyjson:
-			if key != "title":
-				data[key] = emptyjson[key]
+		for key in pattern:
+			if key != "index":
+				data[key] = pattern[key]
 		
-		dict.emptyjson.title[emptyjson.title] = data
+		dict.pattern.index[pattern.index] = data
+		
+		if !dict.pattern.types.has(pattern.title):
+			dict.pattern.types[pattern.title] = []
+		
+		dict.pattern.types[pattern.title].append(pattern.type)
 
 
 func init_node() -> void:
@@ -105,7 +121,9 @@ func init_node() -> void:
 
 
 func init_scene() -> void:
+	scene.icon = load("res://scene/0/icon.tscn")
 	scene.defender = load("res://scene/1/defender.tscn")
+	scene.spell = load("res://scene/1/spell.tscn")
 	scene.attacker = load("res://scene/2/attacker.tscn")
 	scene.field = load("res://scene/3/field.tscn")
 
@@ -123,6 +141,7 @@ func init_vec():
 	
 	vec.size.field = Vector2(64, 64)
 	vec.size.role = Vector2(32, 32)
+	vec.size.spell = Vector2(48, 48)
 	
 	init_window_size()
 
@@ -140,6 +159,20 @@ func init_color():
 	color.role = {}
 	color.role.attack = Color.from_hsv(0 / h, 0.39, 0.7)
 	color.role.defense = Color.from_hsv(210 / h, 0.39, 0.7)
+	
+	color.defender = {}
+	color.defender.active = Color.from_hsv(120 / h, 0.6, 0.7)
+	color.defender.selected = Color.from_hsv(270 / h, 0.6, 0.7)
+	color.defender.inactive = Color.from_hsv(30 / h, 0.6, 0.7)
+	
+	color.spell = {}
+	color.spell.active = Color.from_hsv(210 / h, 0.6, 0.7)
+	color.spell.selected = Color.from_hsv(270 / h, 0.6, 0.7)
+	color.spell.inactive = Color.from_hsv(60 / h, 0.6, 0.7)
+	
+	color.field = {}
+	color.field.selected = Color.from_hsv(0 / h, 0.4, 0.7)
+	color.field.unselected = Color.from_hsv(60 / h, 0.2, 0.7)
 
 
 func save(path_: String, data_: String):

@@ -1,0 +1,46 @@
+[gd_scene load_steps=5 format=3 uid="uid://bujtdqy1aphdt"]
+
+[ext_resource type="Script" path="res://scene/1/spell.gd" id="1_5l8yg"]
+[ext_resource type="PackedScene" path="res://scene/0/couple.tscn" id="3_23gds"]
+[ext_resource type="PackedScene" uid="uid://ciw38iqel0v5a" path="res://scene/0/icon.tscn" id="3_m1hpf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7paps"]
+
+[node name="Spell" type="MarginContainer"]
+custom_minimum_size = Vector2(5, 5)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_5l8yg")
+
+[node name="BG" type="Panel" parent="."]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7paps")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Letter" parent="HBox" instance=ExtResource("3_m1hpf")]
+layout_mode = 2
+
+[node name="Directions" type="HBoxContainer" parent="HBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="Damage" parent="HBox" instance=ExtResource("3_23gds")]
+layout_mode = 2
+
+[node name="Cooldown" parent="HBox" instance=ExtResource("3_23gds")]
+layout_mode = 2

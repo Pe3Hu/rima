@@ -37,4 +37,3 @@ func replenish() -> void:
 		var attacker = reserves.get_child(0)
 		reserves.remove_child(attacker)
 		attackers.add_child(attacker)
-		

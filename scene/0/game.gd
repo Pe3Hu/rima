@@ -18,6 +18,18 @@ func _input(event) -> void:
 			KEY_SPACE:
 				if event.is_pressed() && !event.is_echo():
 					pass
+			KEY_A:
+				if event.is_pressed() && !event.is_echo():
+					sketch.squad.shift_selected_defender(-1)
+			KEY_D:
+				if event.is_pressed() && !event.is_echo():
+					sketch.squad.shift_selected_defender(1)
+			KEY_Q:
+				if event.is_pressed() && !event.is_echo():
+					sketch.squad.shift_selected_spell(-1)
+			KEY_E:
+				if event.is_pressed() && !event.is_echo():
+					sketch.squad.shift_selected_spell(1)
 
 
 func _process(delta_) -> void:
