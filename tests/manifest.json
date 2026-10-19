@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {
+      "name": "anchor_on_hole",
+      "task": "res://tasks/board_anchor_hole.json",
+      "exact_solutions": 1,
+      "exact_orbits": 1,
+      "min_skipped_anchor_on_hole": 1,
+      "check_roundtrip": true
+    },
+    {
+      "name": "mask_arbitrary",
+      "task": "res://tasks/board_10x10_mask.json",
+      "min_solutions": 1,
+      "check_roundtrip": true
+    },
+    {
+      "name": "rect_narrow",
+      "task": "res://tasks/chokuto.json",
+      "exact_solutions": 8,
+      "exact_orbits": 8,
+      "check_roundtrip": true
+    },
+    {
+      "name": "classic_center",
+      "task": "res://tasks/shield.json",
+      "exact_solutions": 520,
+      "exact_orbits": 65,
+      "exact_skipped_anchor_on_hole": 43,
+      "check_canonical": true,
+      "check_roundtrip": true
+    }
+  ]
+}

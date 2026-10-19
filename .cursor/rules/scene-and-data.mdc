@@ -1,0 +1,45 @@
+---
+description: Как сцена и Data связываются, создают детей и шлют сигналы
+globs: "**/*.gd"
+alwaysApply: false
+---
+
+# Сцена и Data
+
+Единственный вход сцены — сеттер `data`. Он раскладывает детей, подписывается на сигналы и собирает экземпляры.
+
+```gdscript
+var data: PieData:
+	set(value_):
+		data = value_
+		connect_datas()
+		connect_signals()
+		init_slices()
+```
+
+`connect_datas` раздаёт вложенные data уже стоящим в сцене нодам: `parlor.data = data.parlor`.
+
+`connect_signals` вешает обработчики и сразу вызывает их, чтобы картинка совпала с состоянием:
+
+```gdscript
+func connect_signals() -> void:
+	data.amount_changed.connect(_on_amount_changed)
+	_on_amount_changed()
+```
+
+`init_xs` проходит коллекцию data и зовёт `add_x`. `add_x` создаёт один экземпляр: сцена из `preload("uid://...")`, `add_child` в узел с уникальным именем `%Slices`, затем `slice.data = slice_data_`. Повторная сборка начинается с `Helper.clear_children`.
+
+Ссылку на соседа, который уже есть в сцене, давать через `@export`, не через `get_node` по пути.
+
+Изменение состояния идёт через поле data. Сеттер пишет значение и шлёт сигнал. Сцена в `_on_*` только обновляет вид и твины.
+
+```gdscript
+var amount: int = 0:
+	set(value_):
+		amount = value_
+		amount_changed.emit()
+```
+
+Дочерняя data в `_init` сама регистрируется у родителя: `pie.slices.append(self)`, `type_to_x[type] = self`. Сцена data не конструирует. Корневые data создаёт только `Mother`.
+
+Длительность твина брать из `Gear`: `Gear.appears[Gear.tempo]`. Числа — из `Catalog`, соответствия — из `Digest`, случайность — из `Helper.rng`.

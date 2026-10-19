@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://mll4h208pl8y"]
+
+[ext_resource type="Script" uid="uid://ccwqgk4vv5pv2" path="res://forge/piece/piece.gd" id="1_piece"]
+[ext_resource type="LabelSettings" uid="uid://bblhdmuoftwi1" path="res://shared/labels/default_label.tres" id="2_gruy5"]
+
+[node name="Piece" type="Node2D" unique_id=1496694490]
+script = ExtResource("1_piece")
+
+[node name="ThicknessLabel" type="Label" parent="." unique_id=1243438685]
+unique_name_in_owner = true
+offset_right = 64.0
+offset_bottom = 64.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "0"
+label_settings = ExtResource("2_gruy5")
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,18 @@
+{
+  "id": "pentomino_12",
+  "name": "Свободные пентамино",
+  "pieces": [
+    {"resource": "res://entities/hull/composition/shape/data/f.tres", "id": "f"},
+    {"resource": "res://entities/hull/composition/shape/data/i.tres", "id": "i"},
+    {"resource": "res://entities/hull/composition/shape/data/l.tres", "id": "l"},
+    {"resource": "res://entities/hull/composition/shape/data/n.tres", "id": "n"},
+    {"resource": "res://entities/hull/composition/shape/data/p.tres", "id": "p"},
+    {"resource": "res://entities/hull/composition/shape/data/t.tres", "id": "t"},
+    {"resource": "res://entities/hull/composition/shape/data/u.tres", "id": "u"},
+    {"resource": "res://entities/hull/composition/shape/data/v.tres", "id": "v"},
+    {"resource": "res://entities/hull/composition/shape/data/w.tres", "id": "w"},
+    {"resource": "res://entities/hull/composition/shape/data/x.tres", "id": "x"},
+    {"resource": "res://entities/hull/composition/shape/data/y.tres", "id": "y"},
+    {"resource": "res://entities/hull/composition/shape/data/z.tres", "id": "z"}
+  ]
+}

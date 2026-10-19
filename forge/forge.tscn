@@ -1,0 +1,92 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://forge/forge.gd" id="1_forge"]
+[ext_resource type="PackedScene" path="res://forge/mold/mold.tscn" id="2_mold"]
+
+[node name="Forge" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_forge")
+
+[node name="Desk" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.08, 0.08, 0.09, 1)
+
+[node name="WeaponNameLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 0.0
+offset_top = 16.0
+offset_right = 1920.0
+offset_bottom = 64.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "Текущее оружие:"
+horizontal_alignment = 1
+
+[node name="LeftCaption" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 40.0
+offset_top = 80.0
+offset_right = 600.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Текущее"
+horizontal_alignment = 1
+
+[node name="CenterCaption" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 680.0
+offset_top = 80.0
+offset_right = 1240.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Изменения"
+horizontal_alignment = 1
+
+[node name="RightCaption" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 1320.0
+offset_top = 80.0
+offset_right = 1880.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Результат"
+horizontal_alignment = 1
+
+[node name="LeftMold" parent="." instance=ExtResource("2_mold")]
+unique_name_in_owner = true
+piece_side = 14
+
+[node name="CenterMold" parent="." instance=ExtResource("2_mold")]
+unique_name_in_owner = true
+is_interactive = true
+piece_side = 15
+
+[node name="RightMold" parent="." instance=ExtResource("2_mold")]
+unique_name_in_owner = true
+piece_side = 16
+
+[node name="FusionButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 860.0
+offset_top = 980.0
+offset_right = 1060.0
+offset_bottom = 1040.0
+disabled = true
+theme_override_font_sizes/font_size = 24
+text = "Fusion"

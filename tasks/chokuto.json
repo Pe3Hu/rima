@@ -1,0 +1,24 @@
+{
+  "id": "rect_3x20",
+  "name": "Прямоугольник 3×20",
+  "weapon": "chokuto",
+  "board": {
+	"type": "rect_with_holes",
+	"width": 3,
+	"height": 20,
+	"holes": []
+  },
+  "pieces": {
+	"source": "pentomino_12"
+  },
+  "symmetry": "identity",
+  "solver": {
+	"max_solutions": 0,
+	"dedupe_by_symmetry": false,
+	"anchor_policy": "any_free_cell"
+  },
+  "output": {
+	"format": "json",
+	"path": "res://out/chokuto.json"
+  }
+}

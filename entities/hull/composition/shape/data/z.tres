@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ShapeData" format=3 uid="uid://b2hpj8ib87nbk"]
+
+[ext_resource type="Script" uid="uid://68d6mc7y0m3c" path="res://entities/hull/composition/shape/shape_data.gd" id="1_73sg8"]
+
+[resource]
+script = ExtResource("1_73sg8")
+type = 12
+id = "z"
+coords = Array[Vector2i]([Vector2i(0, 0), Vector2i(-1, 0), Vector2i(-1, 1), Vector2i(1, 0), Vector2i(1, -1)])
+symmetry = Vector3i(1, 0, 0)
+metadata/_custom_type_script = "uid://68d6mc7y0m3c"

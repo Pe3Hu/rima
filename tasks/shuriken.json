@@ -1,0 +1,24 @@
+{
+  "id": "rect_10x10",
+  "name": "Прямоугольник 10×10",
+  "weapon": "shuriken",
+  "board": {
+	"type": "rect_with_holes",
+	"width": 10,
+	"height": 10,
+	"holes": [[0,0],[1,0],[2,0],[3,0],[6,0],[7,0],[8,0],[9,0],[0,1],[1,1],[7,1],[8,1],[9,1],[0,2],[1,2],[9,2],[9,3],[4,4],[5,4],[4,5],[5,5],[0,6],[9,6],[0,7],[8,7],[9,7],[0,8],[1,8],[2,8],[7,8],[8,8],[9,8],[0,9],[1,9],[2,9],[3,9],[6,9],[7,9],[8,9],[9,9]]
+  },
+  "pieces": {
+	"source": "pentomino_12"
+  },
+  "symmetry": "identity",
+  "solver": {
+	"max_solutions": 0,
+	"dedupe_by_symmetry": false,
+	"anchor_policy": "any_free_cell"
+  },
+  "output": {
+	"format": "json",
+	"path": "res://out/shuriken.json"
+  }
+}
