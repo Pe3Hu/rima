@@ -7,20 +7,17 @@ signal center_changed
 signal right_changed
 signal selection_changed
 signal fusion_applied
+signal display_layer_changed
+signal weapon_switched
 
 var warehouse: WarehouseData
 var left: MoldData
 var center: MoldData
 var right: MoldData
 var selected_ingot: IngotData
+var display_layer: Bozo.Layer = Bozo.Layer.INGOT
 var weapon_name_to_solutions: Dictionary[String, Array] = {}
 var is_batching: bool = false
-
-
-#region init
-func _init() -> void:
-	WarehouseData.new(self)
-#endregion
 
 
 func init_with_weapon(weapon_: WeaponData) -> void:
@@ -40,6 +37,21 @@ func init_with_weapon(weapon_: WeaponData) -> void:
 	refill_center()
 	recalc_right()
 	center_changed.emit()
+
+
+func apply_weapon_switch(delta_: int) -> void:
+	if warehouse == null:
+		return
+	var count := warehouse.get_weapons().size()
+	if count == 0:
+		return
+	var new_index := posmod(warehouse.current_weapon_index + delta_, count)
+	warehouse.apply_current_weapon_index(new_index)
+	init_with_weapon(warehouse.get_current_weapon())
+	apply_selection(null)
+	if left != null:
+		left.apply_highlight([])
+	weapon_switched.emit()
 
 
 func recalc_right() -> void:
@@ -87,6 +99,32 @@ func get_current_weapon_name() -> String:
 	if weapon == null:
 		return ""
 	return weapon.name
+
+
+func apply_display_layer(layer_: Bozo.Layer) -> void:
+	if display_layer == layer_:
+		return
+	display_layer = layer_
+	display_layer_changed.emit()
+
+
+func apply_stratum_highlight(stratum_: StratumData) -> void:
+	if left == null:
+		return
+	if stratum_ == null or _is_same_highlight(stratum_.pieces):
+		left.apply_highlight([])
+		return
+	left.apply_highlight(stratum_.pieces)
+
+
+func _is_same_highlight(pieces_: Array) -> bool:
+	var current: Array = left.highlighted_pieces
+	if current.size() != pieces_.size() or current.is_empty():
+		return false
+	for index in current.size():
+		if current[index] != pieces_[index]:
+			return false
+	return true
 
 
 func apply_selection(ingot_data_: IngotData) -> void:

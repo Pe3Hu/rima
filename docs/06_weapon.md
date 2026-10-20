@@ -1,5 +1,7 @@
 # Шаг 6. `WeaponData` и массив оружий в Mother
 
+> Superseded by docs/18 в части оружия: `weapons` и `current_weapon_index` живут в `WarehouseData`. `Mother.get_current_weapon()` — прокси без своего состояния.
+
 **Цель.** Ввести оружие как первоклассную сущность и массив оружий
 в `Mother`.
 

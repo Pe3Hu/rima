@@ -7,6 +7,10 @@ var id: String = ""
 var weapon_name: String = ""
 var cells: Array[Vector2i] = []
 var holes: Array[Vector2i] = []
+var cell_to_part: Dictionary = {}
+var parts: Array[PartData] = []
+var is_horizontal_symmetric: bool = false
+var is_fully_symmetric: bool = false
 var source_path: String = ""
 var width: int = 0
 var height: int = 0
@@ -34,14 +38,39 @@ func is_cell_inside(cell_: Vector2i) -> bool:
 	return _cell_lookup.has(cell_)
 
 
+func get_part_at(cell_: Vector2i) -> Bozo.Part:
+	if not cell_to_part.has(cell_):
+		return Bozo.Part.NONE
+	return cell_to_part[cell_]
+
+
+## Полная симметрия заменяет горизонтальную: четыре RAZOR, без SPIKE.
+func get_strata_config() -> Array:
+	var config: Array = []
+	if is_fully_symmetric:
+		config.append({"subtype": Bozo.Stratum.RAZOR, "direction": Bozo.Direction.RIGHT})
+		config.append({"subtype": Bozo.Stratum.RAZOR, "direction": Bozo.Direction.LEFT})
+		config.append({"subtype": Bozo.Stratum.RAZOR, "direction": Bozo.Direction.TOP})
+		config.append({"subtype": Bozo.Stratum.RAZOR, "direction": Bozo.Direction.BOTTOM})
+		return config
+	config.append({"subtype": Bozo.Stratum.RAZOR, "direction": Bozo.Direction.RIGHT})
+	if is_horizontal_symmetric:
+		config.append({"subtype": Bozo.Stratum.RAZOR, "direction": Bozo.Direction.LEFT})
+	config.append({"subtype": Bozo.Stratum.SPIKE, "direction": Bozo.Direction.TOP})
+	return config
+
+
 func _read_dictionary(data_: Dictionary) -> void:
 	id = str(data_.get("id", ""))
 	weapon_name = str(data_.get("weapon", ""))
+	is_horizontal_symmetric = data_.get("is_horizontal_symmetric", false) == true
+	is_fully_symmetric = data_.get("is_fully_symmetric", false) == true
 	var board: Dictionary = data_.get("board", {})
 	width = int(board.get("width", 0))
 	height = int(board.get("height", 0))
 	var board_type := str(board.get("type", ""))
 	_read_holes(board.get("holes", []))
+	_read_parts(board)
 	if board_type != "rect_with_holes":
 		load_errors.append("unsupported board.type: " + board_type)
 		return
@@ -71,3 +100,32 @@ func _read_holes(raw_: Variant) -> void:
 			holes.append(Vector2i(int(pair[0]), int(pair[1])))
 		else:
 			load_errors.append("hole must be [x, y]")
+
+
+## spine и bevel лежат в board, формат пар как у holes. Нет ключа — пустой массив.
+func _read_parts(board_: Dictionary) -> void:
+	cell_to_part.clear()
+	parts.clear()
+	_read_part_cells(board_.get("spine", []), Bozo.Part.SPINE, "board.spine")
+	_read_part_cells(board_.get("bevel", []), Bozo.Part.BEVEL, "board.bevel")
+
+
+func _read_part_cells(raw_: Variant, part_: Bozo.Part, label_: String) -> void:
+	if raw_ == null:
+		return
+	if not (raw_ is Array):
+		load_errors.append(label_ + " must be an array")
+		return
+	var cells: Array[Vector2i] = []
+	for pair in raw_:
+		if pair is Array and pair.size() >= 2:
+			var cell := Vector2i(int(pair[0]), int(pair[1]))
+			cells.append(cell)
+			cell_to_part[cell] = part_
+		else:
+			load_errors.append(label_ + " cell must be [x, y]")
+	if cells.is_empty():
+		return
+	var part_data := PartData.new()
+	part_data.init_cells(part_, cells)
+	parts.append(part_data)

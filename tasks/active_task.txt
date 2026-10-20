@@ -1,1 +1,1 @@
-res://tasks/longsword.json
+res://tasks/shuriken.json

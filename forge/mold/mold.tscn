@@ -1,26 +1,38 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://b4q1pxonl4pe1"]
 
-[ext_resource type="Script" path="res://forge/mold/mold.gd" id="1_mold"]
+[ext_resource type="Script" uid="uid://xjsvds77fg3j" path="res://forge/mold/mold.gd" id="1_mold"]
 [ext_resource type="PackedScene" path="res://forge/ingot/ingot.tscn" id="2_ingot"]
-[ext_resource type="PackedScene" path="res://forge/piece/piece.tscn" id="3_piece"]
-[ext_resource type="TileSet" path="res://forge/mold/background.tres" id="4_bg"]
-[ext_resource type="Script" path="res://forge/mold/background.gd" id="5_bg"]
+[ext_resource type="PackedScene" uid="uid://mll4h208pl8y" path="res://forge/piece/piece.tscn" id="3_piece"]
+[ext_resource type="TileSet" uid="uid://ddr0ctl0mdci5" path="res://forge/mold/background.tres" id="4_bg"]
+[ext_resource type="Script" uid="uid://cqirl171ytydq" path="res://forge/mold/background.gd" id="5_bg"]
+[ext_resource type="PackedScene" path="res://forge/part/part.tscn" id="6_part"]
+[ext_resource type="PackedScene" path="res://forge/stratum/stratum.tscn" id="7_stratum"]
 
-[node name="Mold" type="Node2D"]
+[node name="Mold" type="Node2D" unique_id=196009999]
 script = ExtResource("1_mold")
 ingot_scene = ExtResource("2_ingot")
+part_scene = ExtResource("6_part")
 piece_scene = ExtResource("3_piece")
+stratum_scene = ExtResource("7_stratum")
 
-[node name="Background" type="TileMapLayer" parent="."]
+[node name="Background" type="TileMapLayer" parent="." unique_id=820788774]
 unique_name_in_owner = true
-z_index = 0
 tile_set = ExtResource("4_bg")
 script = ExtResource("5_bg")
 
-[node name="Ingots" type="Node2D" parent="."]
+[node name="Ingots" type="Node2D" parent="." unique_id=464711483]
 unique_name_in_owner = true
 z_index = 1
 
-[node name="Pieces" type="Node2D" parent="."]
+[node name="Parts" type="Node2D" parent="." unique_id=1595755181]
+unique_name_in_owner = true
+visible = false
+z_index = 1
+
+[node name="StrataLayer" type="Node2D" parent="."]
+unique_name_in_owner = true
+z_index = 1
+
+[node name="Pieces" type="Node2D" parent="." unique_id=884071630]
 unique_name_in_owner = true
 z_index = 2

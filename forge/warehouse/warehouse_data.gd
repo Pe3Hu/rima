@@ -1,17 +1,40 @@
 class_name WarehouseData
 extends RefCounted
 
-## Склад слитков: по Catalog.COPIES_PER_SHAPE на каждую форму.
+## Общий инвентарь игрока: слитки и список оружий.
 ## Толщины только Catalog.THICKNESS_MIN..THICKNESS_MAX. Ноль сюда не попадает.
 
+signal current_weapon_changed
+
 var shape_to_variants: Dictionary[Bozo.Shape, Array] = {}
+var weapons: Array = []
+var current_weapon_index: int = 0
 
 
 #region init
-func _init(forge_: ForgeData) -> void:
-	forge_.warehouse = self
+func _init() -> void:
 	init_variants()
 #endregion
+
+
+func get_weapons() -> Array:
+	return weapons
+
+
+func get_current_weapon() -> WeaponData:
+	if weapons.is_empty():
+		return null
+	return weapons[current_weapon_index] as WeaponData
+
+
+func apply_current_weapon_index(index_: int) -> void:
+	if weapons.is_empty():
+		return
+	var next := posmod(index_, weapons.size())
+	if current_weapon_index == next:
+		return
+	current_weapon_index = next
+	current_weapon_changed.emit()
 
 
 func init_variants() -> void:

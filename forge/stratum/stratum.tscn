@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://forge/stratum/stratum.gd" id="1_stratum"]
+[ext_resource type="PackedScene" path="res://forge/fulcrum/fulcrum.tscn" id="2_fulcrum"]
+
+[node name="Stratum" type="Node2D"]
+script = ExtResource("1_stratum")
+fulcrum_scene = ExtResource("2_fulcrum")

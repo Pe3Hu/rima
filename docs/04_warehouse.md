@@ -1,5 +1,7 @@
 # Шаг 4. Сущность `Warehouse` (обновление)
 
+> Superseded by docs/18 в части склада: `WarehouseData` создаётся в `Mother._ready` и живёт под `Mother`, не в `ForgeData._init`.
+
 **Цель.** Склад становится частью `ForgeData`, а не самостоятельным
 `RefCounted`. Добавить вычитание Ingot'ов, использованных в центральной Mold.
 

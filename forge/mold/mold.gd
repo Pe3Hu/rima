@@ -5,7 +5,10 @@ extends Node2D
 
 @export var is_interactive: bool = false
 @export var ingot_scene: PackedScene
+@export var part_scene: PackedScene
 @export var piece_scene: PackedScene
+@export var stratum_scene: PackedScene
+@export var shows_strata: bool = false
 @export var piece_side: Bozo.PieceSide = Bozo.PieceSide.NONE
 
 var _layout_key: String = ""
@@ -17,6 +20,8 @@ var data: MoldData:
 			return
 		if data != null and data.changed.is_connected(_on_changed):
 			data.changed.disconnect(_on_changed)
+		if data != null and data.highlight_changed.is_connected(_on_highlight_changed):
+			data.highlight_changed.disconnect(_on_highlight_changed)
 		data = value_
 		connect_datas()
 		connect_signals()
@@ -33,7 +38,10 @@ func connect_signals() -> void:
 		return
 	if not data.changed.is_connected(_on_changed):
 		data.changed.connect(_on_changed)
+	if not data.highlight_changed.is_connected(_on_highlight_changed):
+		data.highlight_changed.connect(_on_highlight_changed)
 	_on_changed()
+	_on_highlight_changed()
 
 
 func _ready() -> void:
@@ -43,16 +51,95 @@ func _ready() -> void:
 func _on_changed() -> void:
 	if not is_node_ready():
 		return
+	_rebuild()
+
+
+func _rebuild() -> void:
 	var layout := _layout_key_of(data)
 	if _layout_key != "" and layout == _layout_key and _refresh_figures():
+		_recalc_strata()
+		init_strata()
+		_on_highlight_changed()
 		return
 	init_layers()
-	_layout_key = _layout_key_of(data)
+	_layout_key = layout
+	_recalc_strata()
+	init_strata()
+	_on_highlight_changed()
+
+
+func _recalc_strata() -> void:
+	if data == null:
+		return
+	var pieces: Array = []
+	for child in %Pieces.get_children():
+		var piece := child as Piece
+		if piece == null or piece.data == null:
+			continue
+		pieces.append(piece.data)
+	data.apply_piece_datas(pieces)
+	data.recalc_strata()
+
+
+func init_strata() -> void:
+	if not is_node_ready():
+		return
+	Helper.clear_children(%StrataLayer)
+	if not shows_strata or data == null or stratum_scene == null:
+		return
+	for item in data.strata:
+		var stratum_data := item as StratumData
+		if stratum_data == null:
+			continue
+		add_stratum(stratum_data)
+
+
+func add_stratum(stratum_data_: StratumData) -> void:
+	var stratum := stratum_scene.instantiate() as Stratum
+	%StrataLayer.add_child(stratum)
+	stratum.data = stratum_data_
+	if not stratum.fulcrum_pressed.is_connected(_on_fulcrum_pressed):
+		stratum.fulcrum_pressed.connect(_on_fulcrum_pressed)
+
+
+func _on_fulcrum_pressed(stratum_: StratumData) -> void:
+	if Mother.forge == null:
+		return
+	Mother.forge.apply_stratum_highlight(stratum_)
+
+
+func _on_highlight_changed() -> void:
+	if not is_node_ready() or data == null:
+		return
+	for child in %Pieces.get_children():
+		var piece := child as Piece
+		if piece == null or piece.data == null:
+			continue
+		piece.is_highlighted = data.highlighted_pieces.has(piece.data)
+		piece.is_selected = data.selected_ingot != null and piece.data.ingot_data == data.selected_ingot
+	for child in %StrataLayer.get_children():
+		var stratum := child as Stratum
+		if stratum == null:
+			continue
+		var fulcrum := stratum.get_fulcrum()
+		if fulcrum == null or fulcrum.data == null:
+			continue
+		fulcrum.is_highlighted = _same_piece_list(fulcrum.data.pieces, data.highlighted_pieces)
+
+
+func _same_piece_list(left_: Array, right_: Array) -> bool:
+	if left_.is_empty() or left_.size() != right_.size():
+		return false
+	for index in left_.size():
+		if left_[index] != right_[index]:
+			return false
+	return true
 
 
 func init_layers() -> void:
 	init_ingots()
 	init_pieces()
+	init_parts()
 
 
 func init_ingots() -> void:
@@ -82,9 +169,27 @@ func init_pieces() -> void:
 	for cell in data.coords:
 		if not ingot_map.has(cell):
 			continue
+		var part := Bozo.Part.NONE
+		if data.template != null:
+			part = data.template.get_part_at(cell)
 		var piece_data := PieceData.new()
-		piece_data.init_cell(cell, int(thickness_map[cell]), ingot_map[cell], piece_side)
+		piece_data.init_cell(cell, int(thickness_map[cell]), ingot_map[cell], piece_side, part)
 		add_piece(piece_data)
+
+
+func init_parts() -> void:
+	if not is_node_ready():
+		return
+	Helper.clear_children(%Parts)
+	if data == null or data.template == null or part_scene == null:
+		return
+	for item in data.template.parts:
+		var part_data := item as PartData
+		if part_data == null:
+			continue
+		var part := part_scene.instantiate() as Part
+		%Parts.add_child(part)
+		part.data = part_data
 
 
 func add_piece(piece_data_: PieceData) -> void:

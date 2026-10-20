@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://forge/part/part.gd" id="1_part"]
+[ext_resource type="TileSet" uid="uid://bknd5r2lywn3k" path="res://forge/part/part.tres" id="2_tiles"]
+
+[node name="Part" type="TileMapLayer"]
+tile_set = ExtResource("2_tiles")
+script = ExtResource("1_part")

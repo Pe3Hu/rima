@@ -71,15 +71,36 @@ horizontal_alignment = 1
 [node name="LeftMold" parent="." instance=ExtResource("2_mold")]
 unique_name_in_owner = true
 piece_side = 14
+shows_strata = true
 
 [node name="CenterMold" parent="." instance=ExtResource("2_mold")]
 unique_name_in_owner = true
 is_interactive = true
 piece_side = 15
+shows_strata = false
 
 [node name="RightMold" parent="." instance=ExtResource("2_mold")]
 unique_name_in_owner = true
 piece_side = 16
+shows_strata = false
+
+[node name="IngotLayerButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 40.0
+offset_top = 16.0
+offset_right = 120.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 24
+text = "1"
+
+[node name="PartLayerButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 136.0
+offset_top = 16.0
+offset_right = 216.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 24
+text = "2"
 
 [node name="FusionButton" type="Button" parent="."]
 unique_name_in_owner = true

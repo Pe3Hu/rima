@@ -1,5 +1,7 @@
 # Шаг 7. Сцена Forge
 
+> Superseded by docs/18 в части forge-scene: `ForgeData.warehouse` — ссылка на `Mother.warehouse`, в `_init` не создаётся.
+
 **Цель.** Собрать сцену Forge: три Mold, заголовок оружия, кнопка Fusion.
 Игровая логика — в `ForgeData`, сцена только отображает.
 

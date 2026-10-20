@@ -19,6 +19,17 @@ var shape_to_color: Dictionary[Bozo.Shape, Color] = {
 	Bozo.Shape.Z: Color("e69f00"),
 }
 
+var fulcrum_color: Color = Color("ffe066")
+var fulcrum_color_highlight: Color = Color("ffffff")
+var stratum_highlight_color: Color = Color("b8ff4d")
+var selection_color: Color = Color("9ecbff")
+
+## Два цвета, различимых на тёмном столе и между собой.
+var part_to_color: Dictionary[Bozo.Part, Color] = {
+	Bozo.Part.SPINE: Color("0077bb"),
+	Bozo.Part.BEVEL: Color("ee7733"),
+}
+
 var shape_to_cells: Dictionary[Bozo.Shape, Array] = {
 	Bozo.Shape.F: [Vector2i(0, 0), Vector2i(0, -1), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(-1, 1)],
 	Bozo.Shape.I: [Vector2i(0, 0), Vector2i(-1, 0), Vector2i(-2, 0), Vector2i(1, 0), Vector2i(2, 0)],

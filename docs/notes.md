@@ -82,6 +82,27 @@
 - Повторный ЛКМ по тому же Ingot'у центра снимает выбор (`apply_selection(null)`). Клик по пустой клетке шаблона тоже снимает выбор. Клик вне центральной Mold игнорируется.
 - Если у формы в складе не осталось вариантов (`get_variant_count == 0`), `apply_variant_change` ничего не делает.
 - Склад и выбор решения центра — non-seeded `Helper.rng`.
+- `Bozo.Part`: `NONE = 0`, `SPINE = 18`, `BEVEL = 19`. `Type.PART = 20`. Строки регистра — `spine` и `bevel`.
+- `spine` и `bevel` в `tasks/<weapon>.json` лежат внутри `board`, рядом с `holes`: массив пар `[x, y]`. Нет ключа — пустой массив, `get_part_at` даёт `NONE`. У `shield` этих полей нет.
+- `PieceData.part` проставляется при пересборке Piece'ов в `Mold.init_pieces` (`template.get_part_at`). Левая, центральная и правая Mold — один шаблон, на одинаковых клетках `part` совпадает.
+- `Bozo.Layer`: `NONE = 0`, `INGOT = 21`, `PART = 22`. `Type.LAYER = 23`. Строки регистра — `ingot` и `part`.
+- `Digest.part_to_color`: `SPINE` — `#0077bb`, `BEVEL` — `#ee7733`. Клетка Part — `Catalog.MOLD_CELL_SIZE` (64), отдельного ключа нет.
+- Part устроен как Ingot: `PartData` + сцена `forge/part/part.tscn` (`TileMapLayer`, тайлсет `part.tres` — копия тайлсета Ingot). В `Mold` контейнер `%Parts` (`Node2D`), как `%Ingots`. На шаблоне два экземпляра: spine и bevel. Цвет — `modulate` слоя.
+- Видимость `%Ingots` и `%Parts` на всех трёх Mold задаёт `ForgeData.display_layer` (по умолчанию `INGOT`). Кнопки 1/2 и клавиши `KEY_1` / `KEY_2`.
+- Piece-Label с толщиной виден в обоих режимах слоёв. Режим «только Part» без подписи — отдельная задача.
+- Флаги симметрии в `tasks/<weapon>.json`, top-level: `is_horizontal_symmetric` и `is_fully_symmetric`. По умолчанию `false`, пользователь задаёт их руками.
+- `is_fully_symmetric` важнее `is_horizontal_symmetric`: горизонтальный флаг при полной симметрии не используется. Конфиг — четыре `RAZOR` (`RIGHT`, `LEFT`, `TOP`, `BOTTOM`), без `SPIKE`. `TOP`/`BOTTOM` остаются вертикальными по обходу; Fulcrum для них — шаг 15.
+- Stratum идёт от края входа и обрывается на первой пустой клетке. Клетки за разрывом в этот stratum не входят.
+- `Bozo.Stratum`: `NONE = 0`, `RAZOR = 24`, `SPIKE = 25`. `Bozo.Direction`: `NONE = 0`, `RIGHT = 26`, `LEFT = 27`, `TOP = 28`, `BOTTOM = 29`. В `Type` не регистрировались. `MoldData.recalc_strata` вызывается из `Mold._rebuild` после пересборки Piece'ов. Сигнал `changed` не менялся. Результат — `MoldData.strata`, сигнал `strata_changed`.
+- Валидный stratum — только отрезок BEVEL → SPINE: первый piece — `BEVEL`, последний — `SPINE`, длина не меньше 2. Только-SPINE, только-BEVEL и отрезок, начатый со SPINE, не создаются. Так Fulcrum шага 15 встаёт у входа, а тело stratum'а — это spine за скосом.
+- `part == NONE` обрывает обход так же, как пустая клетка. Второй `BEVEL` тоже останавливает обход, и эта клетка в `pieces` не входит. В созданном stratum'е ровно один `BEVEL`, на позиции 0.
+- Вход всегда с крайней клетки линии, и валидный stratum с неё начинается. Поэтому край входа у stratum'а совпадает с краем линии: `RIGHT` — max x, `LEFT` — min x, `TOP` — min y, `BOTTOM` — max y. Дальний конец — последний SPINE и может не доходить до противоположного края. Для Fulcrum берётся край по клеткам stratum'а.
+- Strata рисуются только на левой Mold: `shows_strata = true` у `%LeftMold`, у центральной и правой — `false`. `Digest.fulcrum_color` — `#ffe066`. `FulcrumData` хранит `coord`, `sum` и `pieces` и не ссылается на `StratumData`.
+- На текущем левом `chokuto` 21 Fulcrum стоят в разных клетках, совпадений нет. Если соседние stratum'ы займут одну клетку — сдвигать наружу; решать в шаге 16 или отдельной задачей.
+- У `Fulcrum` уже есть сигнал `pressed`, у `Stratum` — `fulcrum_pressed`. Слушатель не подключён: это шаг 16.
+- Повторный клик по тому же Fulcrum снимает подсветку, если piece'ы этого stratum'а уже в `highlighted_pieces`. Клик по другому Fulcrum переключает набор. Выбор Ingot'а в центре (шаг 9) эту подсветку не трогает.
+- Снятие кликом вне Fulcrum: Fulcrum вызывает `accept_event()`, поэтому `_unhandled_input` сцены Forge видит только остальные клики и зовёт `left.apply_highlight([])`. Клик по piece центра туда не приводит.
+- Цвета: `Digest.fulcrum_color_highlight` — `#ffffff`, `Digest.stratum_highlight_color` — `#b8ff4d` (обводка толщины). База Fulcrum — `Digest.fulcrum_color`.
 
 ## Известные ограничения
 
@@ -94,3 +115,67 @@
 - Правило: `class_name` совпадает с файлом. У автозагрузок `class_name` нет: имя синглтона уже занимает глобал (`Mother`, `Helper`, …). Иначе Godot ругается на конфликт.
 - `Helper.gd` и `Digest.gd` названы с заглавной буквы. Не переименовывались: uid в `project.godot` смотрит на эти пути. Новые автозагрузки — строчные `mother.gd`, `bozo.gd`, `catalog.gd`, `gear.gd`.
 - `tools/` и `tests/` не фичи игры. Это не запрещённые `scripts/` / `scenes/` / `datas/` / `components/`. Путь `res://tools/run_task.gd` оставлен.
+
+## Приёмка Part / Stratum / Fulcrum
+
+Прогон headless на сцене `forge.tscn`: те же узлы, кнопки, клавиши и `apply_*`, без взгляда в окно редактора. Временный зонд в `forge.gd` удалён. В `tests/run_all.gd` проверки не добавлялись: запуск через `-s` не видит автозагрузки, а `MoldTemplateData` на них опирается.
+
+Коды strata: `24-26` Razor-RIGHT, `24-27` Razor-LEFT, `24-28` Razor-TOP, `24-29` Razor-BOTTOM, `25-28` Spike-TOP.
+
+### Ручные сценарии
+
+| Сценарий | Результат | Комментарий |
+|---|---|---|
+| 1. spine/bevel | pass | `chokuto`: (0,1) SPINE, (2,0) BEVEL, клетка вне — NONE. `shield` без полей грузится, `get_part_at` даёт NONE. `part` на трёх Mold совпадает с шаблоном. |
+| 2. слои 1/2 | pass | Кнопки и клавиши 1/2. На всех трёх Mold Ingot и Part переключаются. Два цвета Part. Piece-Label виден в обоих режимах. |
+| 3. default | pass | `chokuto`: 19 Razor-RIGHT и 2 Spike-TOP. Fulcrum справа и сверху, сумма верна, клетки подряд, один BEVEL в начале. `saber` тоже оба направления. `falchion` — только Razor-RIGHT. `greatsword` — пусто: край входа не даёт BEVEL→SPINE. |
+| 4. горизонтальная симметрия | pass | Razor-LEFT и Fulcrum слева: axe 2, longsword 10, spear 3, trident 2. Spike-TOP в конфиге остаётся, на этих силуэтах не рисуется. `hammer` — ни одного stratum. |
+| 5. полная симметрия | fail | Spike нигде не создаётся. Все 4 направления сразу не рисуются: `shuriken` — LEFT, TOP, BOTTOM, без RIGHT; `shield` — флаг есть, полей spine/bevel нет, strata пустые. |
+| 6. сумма | pass | `FulcrumData.sum` равен сумме толщин. После Fusion на `chokuto` сумма Fulcrum'ов 97 → 381. |
+| 7. клик | pass | Подсветка Fulcrum и всех piece'ов, повторный клик снимает, другой Fulcrum переключает, клик вне снимает. Центр и право без узлов strata. |
+| 8. регрессии | pass | Клик по piece центра не снимает левую подсветку. A меняет вариант (0→2). Fusion работает. Слои 1/2 не сбрасывают выбор и не гасят Fusion. Q/E в игровых действиях нет; keycode E есть только у встроенного `ui_text_caret_line_end.macos`. |
+
+### Автоматические проверки
+
+| Проверка | Результат | Комментарий |
+|---|---|---|
+| `get_part_at` spine/bevel/вне | pass | `chokuto` и пустой `shield`. |
+| default: ≥1 Razor-RIGHT и ≥1 Spike-TOP | pass | `chokuto`, `saber`. Не у каждого оружия без флагов. |
+| horizontal: ≥1 Razor-LEFT | pass | axe, longsword, spear, trident. |
+| full: нет SPIKE | pass | `shield`, `shuriken`. |
+| full: все 4 direction в strata | fail | Ни одно текущее fully-symmetric оружие не даёт все четыре. |
+| `FulcrumData.sum` | pass | На всех непустых strata, и на сцене после клика. |
+
+Консоль этого прогона без новых ошибок и предупреждений.
+
+### Открытые вопросы и ограничения после итерации
+
+- Пополнение склада и сообщение «металл закончился» — вне этого фронта.
+- Переключения оружия в игре нет. Флаги проверялись по уже загруженным `Mother.weapons`, не кнопкой в сцене.
+- Перекрытие Fulcrum'ов соседних stratum'ов на `chokuto` не встретилось. Если появится — сдвиг наружу, отдельная задача.
+- Режим «только Part» без Piece-Label не делался.
+
+### Следующая итерация
+
+Силуэты и правило BEVEL→SPINE расходятся с ожиданием «все запрошенные стороны видны». Не чинилось: JSON и правило входа в этом шаге не меняются.
+
+- `greatsword`, `hammer`: strata пустые.
+- Оружие с горизонтальной симметрией не рисует Spike-TOP.
+- `shuriken` при полной симметрии без Razor-RIGHT.
+- `shield` с `is_fully_symmetric` не имеет spine/bevel.
+
+Нужно решить, править раскладку spine/bevel в `tasks/<weapon>.json` или ослаблять вход stratum'а. Это отдельная задача, не баг обхода.
+
+## Шаг 19 — фикс подсветки
+
+Обрыв шага 16 не в сигналах и не в ссылках `PieceData`: `Fulcrum.pressed` доходит до `left.apply_highlight`, и piece'ы stratum'а — те же экземпляры, что на сцене (`MoldData._coord_to_piece`, вариант 1 уже был). `Piece._show_thickness` писал outline в theme, а Label рисует контур из общего `LabelSettings` и theme игнорирует. Fulcrum — Button, поэтому подсвечивался.
+
+У каждой клетки своя копия `LabelSettings`. `Piece.is_selected` и `Piece.is_highlighted` разделены. Оба включены — `Digest.stratum_highlight_color`, только выбор — `Digest.selection_color` (`#9ecbff`), иначе базовый тёмный контур. Вариант 2 не использовался.
+
+## Шаг 18 — warehouse-рефактор
+
+`WarehouseData` живёт под `Mother` (`Mother.warehouse`), создаётся один раз в `Mother._ready`. `weapons` и `current_weapon_index` переехали в склад. `Mother.weapons` и `Mother.current_weapon_index` удалены. `Mother.get_current_weapon()` — прокси без своего состояния. `ForgeData.warehouse` — ссылка на `Mother.warehouse`, в `_init` не создаётся.
+
+Q/E — предыдущее/следующее оружие (`forge_prev_weapon` / `forge_next_weapon`). A/D по-прежнему меняют вариант Ingot'а. Q/E в шаге 5 убрали как навигацию решений; здесь другая семантика, конфликта нет.
+
+Слитки общие на все оружия. Fusion списывает из одного пула: на прогоне 36 → 24 на `chokuto`, затем 24 → 12 на `axe`. Исчерпание формы блокирует Fusion на всех оружиях. Кэш решений `weapon_name_to_solutions` остаётся в `ForgeData` и переживает переключение.

@@ -1,12 +1,14 @@
 extends Node
 
 ## Все enum проекта. NONE = 0 повторяется в каждом enum.
-## Остальные значения общие: Shape 1…12, Type.SHAPE = 13, PieceSide 14…16, Type.PIECE_SIDE = 17.
+## Остальные значения общие: Shape 1…12, Type.SHAPE = 13, PieceSide 14…16, Type.PIECE_SIDE = 17, Part 18…19, Type.PART = 20, Layer 21…22, Type.LAYER = 23, Stratum 24…25, Direction 26…29.
 
 enum Type {
 	NONE = 0,
 	SHAPE = 13,
 	PIECE_SIDE = 17,
+	PART = 20,
+	LAYER = 23,
 }
 
 enum Shape {
@@ -32,6 +34,32 @@ enum PieceSide {
 	RIGHT = 16,
 }
 
+enum Part {
+	NONE = 0,
+	SPINE = 18,
+	BEVEL = 19,
+}
+
+enum Layer {
+	NONE = 0,
+	INGOT = 21,
+	PART = 22,
+}
+
+enum Stratum {
+	NONE = 0,
+	RAZOR = 24,
+	SPIKE = 25,
+}
+
+enum Direction {
+	NONE = 0,
+	RIGHT = 26,
+	LEFT = 27,
+	TOP = 28,
+	BOTTOM = 29,
+}
+
 var type_to_index: Dictionary = {}
 var type_to_enum: Dictionary = {}
 
@@ -45,6 +73,8 @@ func _ready() -> void:
 func register_enums() -> void:
 	register_enum(Type.SHAPE, Shape)
 	register_enum(Type.PIECE_SIDE, PieceSide)
+	register_enum(Type.PART, Part)
+	register_enum(Type.LAYER, Layer)
 
 
 func register_enum(type_: Type, enum_dict_: Dictionary) -> void:

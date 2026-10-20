@@ -1,35 +1,30 @@
 extends Node
 
-## Корень состояния. Оружия и кузница.
+## Корень состояния. Склад и кузница.
 
-var weapons: Array = []
-var current_weapon_index: int = 0
+var warehouse: WarehouseData
 var forge: ForgeData
 
 
 #region init
 func _ready() -> void:
+	warehouse = WarehouseData.new()
 	_load_weapons()
-	current_weapon_index = 0
+	warehouse.current_weapon_index = 0
 	forge = ForgeData.new()
+	forge.warehouse = warehouse
 	forge.init_with_weapon(get_current_weapon())
 #endregion
 
 
 func get_current_weapon() -> WeaponData:
-	if weapons.is_empty():
+	if warehouse == null:
 		return null
-	return weapons[current_weapon_index]
-
-
-func apply_current_weapon_index(index_: int) -> void:
-	if weapons.is_empty():
-		return
-	current_weapon_index = posmod(index_, weapons.size())
+	return warehouse.get_current_weapon()
 
 
 func _load_weapons() -> void:
-	weapons.clear()
+	warehouse.weapons.clear()
 	var directory := DirAccess.open(Catalog.TASKS_PATH)
 	if directory == null:
 		push_error("tasks folder missing: " + Catalog.TASKS_PATH)
@@ -44,7 +39,7 @@ func _load_weapons() -> void:
 		var weapon := _weapon_from_file(Catalog.TASKS_PATH.path_join(file_name))
 		if weapon == null or weapon.name == "":
 			continue
-		weapons.append(weapon)
+		warehouse.weapons.append(weapon)
 	_put_chokuto_first()
 
 
@@ -106,13 +101,13 @@ func _origin_for(shape_: int, is_flipped_: bool, steps_: int, anchor_: Vector2i)
 
 func _put_chokuto_first() -> void:
 	var found := -1
-	for index in weapons.size():
-		var weapon := weapons[index] as WeaponData
+	for index in warehouse.weapons.size():
+		var weapon := warehouse.weapons[index] as WeaponData
 		if weapon != null and weapon.name == "chokuto":
 			found = index
 			break
 	if found <= 0:
 		return
-	var chokuto: WeaponData = weapons[found]
-	weapons.remove_at(found)
-	weapons.insert(0, chokuto)
+	var chokuto: WeaponData = warehouse.weapons[found]
+	warehouse.weapons.remove_at(found)
+	warehouse.weapons.insert(0, chokuto)
